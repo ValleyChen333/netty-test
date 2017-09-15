@@ -10,6 +10,7 @@
     <modules>
         <module>netty-log-message</module>
         <module>netty-ping</module>
+        <module>netty-time</module>
     </modules>
     <packaging>pom</packaging>
 
