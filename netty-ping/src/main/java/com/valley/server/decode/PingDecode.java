@@ -1,13 +1,11 @@
-package com.valley.server.handler;
+package com.valley.server.decode;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.ReferenceCountUtil;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import io.netty.handler.codec.ReplayingDecoder;
+
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * ----------Dragon be here!----------/
@@ -32,27 +30,17 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author valley chen
  * @version 1.0.0
- * @date 2017/9/14
- * <p>
- * Handles a server-side channel.
+ * @date 2017/9/16
  */
-public class PingServerHandler extends ChannelInboundHandlerAdapter {
-
+public class PingDecode extends ReplayingDecoder<Void> {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        String request = (String) msg;
-        if (request.equals("ping")) {
-            ByteBuf buffer = ctx.alloc().buffer(4);
-            buffer.writeBytes("\npong\n".getBytes());
-            ctx.writeAndFlush(buffer);
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+        if (in.readableBytes() < 4) {
+            return;
         }
 
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
-        ctx.close();
+        CharSequence sequence = in.readCharSequence(4, Charset.forName("ASCII"));
+        out.add(sequence.toString());
     }
 }

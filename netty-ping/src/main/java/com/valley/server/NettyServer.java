@@ -1,5 +1,6 @@
 package com.valley.server;
 
+import com.valley.server.decode.PingDecode;
 import com.valley.server.handler.PingServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -52,7 +53,7 @@ public class NettyServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new PingServerHandler());
+                            ch.pipeline().addLast(new PingDecode(),new PingServerHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
